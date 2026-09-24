@@ -3,18 +3,112 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PAGO LIMPIEZA</title>
+    <title>Pagos Corporativos - LimpiezaPro</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/estilo.css">
+    <script>
+        if (localStorage.getItem('sesionEmpresaActiva') !== 'true') window.location.href = 'index.html';
+    </script>
 </head>
-<body>
-    <nav class="bg-menu">
-        <a href="index.html" class="a-menu">PRINCIPAL </a> |-|
-        <a href="empresa.html" class="a-menu">EMPRESA </a> |-|
-    </nav>  
-    <header>
-        <div class="header">
-            <h1>PAGO LIMPIEZA</h1>
-            <p class="header-sub">Limpieza</p>
+<body class="bg-light">
+
+    <nav class="navbar navbar-expand-lg custom-navbar shadow-sm">
+        <div class="container">
+            <a class="navbar-brand text-white fw-bold" href="empresa.html">LimpiezaPro - Portal Corporativo</a>
+            <div class="ms-auto">
+                <a href="empresa.html" class="btn btn-outline-light btn-sm">Volver al Panel</a>
+            </div>
         </div>
-    </header>
+    </nav>
+
+    <div class="container py-5">
+        <h2 class="mb-4 color-verde fw-bold text-center">Línea de Pagos y Facturación</h2>
+        <div class="row" id="contenedorPagosEmpresa">
+            <!-- Los pagos se cargarán aquí -->
+        </div>
+    </div>
+
+    <script>
+        function cargarPagosEmpresa() {
+            const empresaActiva = localStorage.getItem('nombreEmpresaActiva');
+            let todasLasSolicitudes = JSON.parse(localStorage.getItem('solicitudesLimpieza')) || [];
+            const contenedor = document.getElementById('contenedorPagosEmpresa');
+            contenedor.innerHTML = ''; 
+
+            const misSolicitudes = todasLasSolicitudes.filter(sol => sol.usuario === empresaActiva && sol.tipoCliente === 'Empresa');
+
+            if (misSolicitudes.length === 0) {
+                contenedor.innerHTML = `<div class="col-12 text-center"><p class="text-muted">No hay registros de facturación.</p></div>`;
+                return;
+            }
+
+            misSolicitudes.reverse().forEach((solicitud) => {
+                const indiceReal = todasLasSolicitudes.findIndex(s => s.idSolicitud === solicitud.idSolicitud);
+                let contenidoPago = '';
+
+                if (solicitud.esPagoTotal) {
+                    contenidoPago = `
+                        <div class="alert alert-success d-flex align-items-center mb-0" role="alert">
+                            <span class="fs-4 me-3">✅</span>
+                            <div>
+                                <h5 class="alert-heading mb-1 fw-bold">Factura Pagada</h5>
+                                <p class="mb-0 small">Monto cancelado por $${solicitud.totalPagado.toLocaleString('es-CL')}.</p>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    const cuotasPendientes = solicitud.cuotasTotales - solicitud.cuotasPagadas;
+                    
+                    if (cuotasPendientes === 0) {
+                        contenidoPago = `
+                            <div class="alert alert-success d-flex align-items-center mb-0" role="alert">
+                                <span class="fs-4 me-3">✅</span>
+                                <div>
+                                    <h5 class="alert-heading mb-1 fw-bold">Línea de Crédito Saldada</h5>
+                                    <p class="mb-0 small">Las ${solicitud.cuotasTotales} cuotas han sido abonadas exitosamente.</p>
+                                </div>
+                            </div>
+                        `;
+                    } else {
+                        contenidoPago = `
+                            <div class="bg-white border rounded p-3">
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span class="text-muted">Cuotas abonadas: <strong>${solicitud.cuotasPagadas} / ${solicitud.cuotasTotales}</strong></span>
+                                    <span class="color-verde fw-bold">Valor Mensual: $${solicitud.valorCuota.toLocaleString('es-CL')}</span>
+                                </div>
+                                <div class="progress mb-3" style="height: 10px;">
+                                    <div class="progress-bar bg-verde" role="progressbar" style="width: ${(solicitud.cuotasPagadas / solicitud.cuotasTotales) * 100}%"></div>
+                                </div>
+                                <button class="btn btn-sm btn-verde text-white w-100" onclick="pagarCuotaEmpresa(${indiceReal})">Abonar Siguiente Cuota ($${solicitud.valorCuota.toLocaleString('es-CL')})</button>
+                            </div>
+                        `;
+                    }
+                }
+
+                contenedor.innerHTML += `
+                    <div class="col-md-6 mb-4">
+                        <div class="card shadow-sm border-0 h-100">
+                            <div class="card-header bg-verde-claro fw-bold color-verde">
+                                OT: ${solicitud.idSolicitud} | ${solicitud.tipoPropiedad}
+                            </div>
+                            <div class="card-body">
+                                ${contenidoPago}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function pagarCuotaEmpresa(indiceReal) {
+            let todasLasSolicitudes = JSON.parse(localStorage.getItem('solicitudesLimpieza'));
+            todasLasSolicitudes[indiceReal].cuotasPagadas += 1;
+            localStorage.setItem('solicitudesLimpieza', JSON.stringify(todasLasSolicitudes));
+            alert('¡Abono registrado exitosamente en el sistema!');
+            cargarPagosEmpresa(); 
+        }
+
+        cargarPagosEmpresa();
+    </script>
 </body>
 </html>

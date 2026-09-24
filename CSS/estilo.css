@@ -1,0 +1,83 @@
+/* ===== VARIABLES DE COLORES ===== */
+:root {
+    --color-cian: #00bcd4;
+    --color-verde: #2e7d32; /* Un verde más elegante */
+    --color-azul-claro: #03a9f4;
+    --color-verde-claro: #e8f5e9;
+    --color-cian-claro: #e0f7fa;
+    --color-azul-muy-claro: #e1f5fe;
+}
+
+/* ===== NAVEGACIÓN ===== */
+.custom-navbar {
+    background-color: var(--color-azul-claro);
+}
+
+/* ===== ENCABEZADO / HERO ===== */
+/* Combinamos los 3 colores en un gradiente fluido */
+.hero-section {
+    background: linear-gradient(135deg, var(--color-verde) 0%, var(--color-cian) 50%, var(--color-azul-claro) 100%);
+    min-height: 60vh;
+    display: flex;
+    align-items: center;
+}
+
+.shadow-text {
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* ===== UTILIDADES DE TEXTO ===== */
+.color-cian { color: var(--color-cian); }
+.color-verde { color: var(--color-verde); }
+.color-azul-claro { color: var(--color-azul-claro); }
+
+/* ===== ICONOS EN TARJETAS ===== */
+.icon-box {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+}
+.bg-verde-claro { background-color: var(--color-verde-claro); }
+.bg-cian-claro { background-color: var(--color-cian-claro); }
+.bg-azul-claro { background-color: var(--color-azul-muy-claro); }
+
+/* ===== EFECTOS DE TARJETAS ===== */
+.card-hover {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.card-hover:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.15) !important;
+}
+
+/* ===== BOTONES PERSONALIZADOS ===== */
+.btn-verde {
+    background-color: var(--color-verde);
+    border: none;
+}
+.btn-verde:hover {
+    background-color: #1b5e20;
+    color: white;
+}
+
+.btn-cian {
+    background-color: var(--color-cian);
+    border: none;
+}
+.btn-cian:hover {
+    background-color: #0097a7;
+    color: white;
+}
+
+.btn-azul {
+    background-color: var(--color-azul-claro);
+    border: none;
+}
+.btn-azul:hover {
+    background-color: #0288d1;
+    color: white;
+}

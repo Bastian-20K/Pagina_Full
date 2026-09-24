@@ -3,18 +3,130 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>REPORTE</title>
+    <title>Reportes Corporativos - LimpiezaPro</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/estilo.css">
+    <script>
+        if (localStorage.getItem('sesionEmpresaActiva') !== 'true') window.location.href = 'index.html';
+    </script>
 </head>
-<body>
-    <nav class="bg-menu">
-        <a href="index.html" class="a-menu">PRINCIPAL </a> |-|
-        <a href="empresa.html" class="a-menu">EMPRESA </a> |-|
-    </nav>  
-    <header>
-        <div class="header">
-            <h1>REPORTE</h1>
-            <p class="header-sub">Limpieza</p>
+<body class="bg-light">
+
+    <nav class="navbar navbar-expand-lg custom-navbar shadow-sm">
+        <div class="container">
+            <a class="navbar-brand text-white fw-bold" href="empresa.html">LimpiezaPro - Portal Corporativo</a>
+            <div class="ms-auto">
+                <a href="empresa.html" class="btn btn-outline-light btn-sm">Volver al Panel</a>
+            </div>
         </div>
-    </header>
+    </nav>
+
+    <div class="container py-5">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="color-cian fw-bold mb-0">Historial y Facturación</h2>
+            <button class="btn btn-cian text-white" onclick="window.print()">🖨️ Exportar Balance General</button>
+        </div>
+
+        <div class="card shadow-sm border-0">
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0 align-middle">
+                        <thead class="bg-cian-claro color-cian">
+                            <tr>
+                                <th class="px-4 py-3">Orden (OT)</th>
+                                <th class="py-3">Emisión</th>
+                                <th class="py-3">Detalle</th>
+                                <th class="py-3">Monto Neto</th>
+                                <th class="py-3">Estado</th>
+                                <th class="px-4 py-3 text-end">Comprobante</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tablaReportesEmpresa">
+                            <!-- JS inyecta datos -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Factura -->
+    <div class="modal fade" id="modalFactura" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-cian-claro">
+                    <h5 class="modal-title color-cian fw-bold">Comprobante de Servicio</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="cuerpoFactura">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="button" class="btn btn-azul text-white" onclick="window.print()">Imprimir Factura</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const empresaActiva = localStorage.getItem('nombreEmpresaActiva');
+        const todasLasSolicitudes = JSON.parse(localStorage.getItem('solicitudesLimpieza')) || [];
+        const misSolicitudes = todasLasSolicitudes.filter(sol => sol.usuario === empresaActiva && sol.tipoCliente === 'Empresa');
+        const tabla = document.getElementById('tablaReportesEmpresa');
+
+        if (misSolicitudes.length === 0) {
+            tabla.innerHTML = `<tr><td colspan="6" class="text-center py-4 text-muted">No existen movimientos registrados para esta empresa.</td></tr>`;
+        } else {
+            misSolicitudes.reverse().forEach(solicitud => {
+                let badgeClass = 'bg-warning text-dark';
+                if(solicitud.estado === 'En marcha') badgeClass = 'bg-info text-white';
+                if(solicitud.estado === 'Terminada') badgeClass = 'bg-success text-white';
+
+                tabla.innerHTML += `
+                    <tr>
+                        <td class="px-4 fw-bold text-secondary">${solicitud.idSolicitud}</td>
+                        <td>${solicitud.fecha}</td>
+                        <td>${solicitud.tipoPropiedad}</td>
+                        <td>$${solicitud.totalPagado.toLocaleString('es-CL')}</td>
+                        <td><span class="badge ${badgeClass}">${solicitud.estado}</span></td>
+                        <td class="px-4 text-end">
+                            <button class="btn btn-sm btn-outline-info" onclick='verFactura(${JSON.stringify(solicitud)})'>
+                                Ver Detalle
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        function verFactura(solicitud) {
+            const cuerpo = document.getElementById('cuerpoFactura');
+            cuerpo.innerHTML = `
+                <div class="text-center mb-4">
+                    <h4 class="fw-bold color-cian">LimpiezaPro Corporativo</h4>
+                    <p class="text-muted small mb-0">Orden de Trabajo (OT): <strong>${solicitud.idSolicitud}</strong></p>
+                </div>
+                <ul class="list-group list-group-flush mb-3">
+                    <li class="list-group-item d-flex justify-content-between px-0">
+                        <span class="text-muted">Empresa Cliente:</span> <strong>${solicitud.usuario}</strong>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between px-0">
+                        <span class="text-muted">Fecha Emisión:</span> <strong>${solicitud.fecha}</strong>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between px-0">
+                        <span class="text-muted">Cobertura:</span> <strong>${solicitud.tipoPropiedad}</strong>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between px-0">
+                        <span class="text-muted">Condición de Pago:</span> <strong>${solicitud.esPagoTotal ? 'Contado' : 'Línea de Crédito (' + solicitud.cuotasTotales + ' Cuotas)'}</strong>
+                    </li>
+                </ul>
+                <div class="bg-azul-muy-claro p-3 text-end rounded border-start border-4 border-info">
+                    <h5 class="mb-0">Monto Facturado: <span class="color-cian fw-bold">$${solicitud.totalPagado.toLocaleString('es-CL')}</span></h5>
+                </div>
+            `;
+            new bootstrap.Modal(document.getElementById('modalFactura')).show();
+        }
+    </script>
 </body>
 </html>

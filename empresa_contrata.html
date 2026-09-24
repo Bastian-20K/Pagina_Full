@@ -3,18 +3,212 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CONTRATA SERVICIO</title>
+    <title>Contratar Servicio Corporativo - LimpiezaPro</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/estilo.css">
+    <script>
+        if (localStorage.getItem('sesionEmpresaActiva') !== 'true') window.location.href = 'index.html';
+    </script>
+    <style>
+        .espacio-card { border-left: 5px solid var(--color-cian); background-color: var(--color-azul-muy-claro); }
+    </style>
 </head>
-<body>
-    <nav class="bg-menu">
-        <a href="index.html" class="a-menu">PRINCIPAL </a> |-|
-        <a href="empresa.html" class="a-menu">EMPRESA </a> |-|
-    </nav>  
-    <header>
-        <div class="header">
-            <h1>CONTRATA SERVICIO</h1>
-            <p class="header-sub">Limpieza</p>
+<body class="bg-light">
+
+    <nav class="navbar navbar-expand-lg custom-navbar shadow-sm">
+        <div class="container">
+            <a class="navbar-brand text-white fw-bold" href="empresa.html">LimpiezaPro - Portal Corporativo</a>
+            <div class="ms-auto">
+                <a href="empresa.html" class="btn btn-outline-light btn-sm">Volver al Panel</a>
+            </div>
         </div>
-    </header>
+    </nav>
+
+    <div class="container py-4">
+        <h2 class="mb-4 color-azul-claro fw-bold text-center">Descripción del Servicio Solicitado</h2>
+        
+        <form id="formContratoEmpresa">
+            
+            <!-- PASO 1: Agregar Espacios Dinámicos -->
+            <div class="card shadow-sm mb-4 border-0">
+                <div class="card-header bg-cian-claro color-cian fw-bold d-flex justify-content-between align-items-center">
+                    <span>1. Configurar Espacios y Zonas</span>
+                    <button type="button" class="btn btn-sm btn-cian text-white" onclick="agregarEspacio()">+ Agregar Espacio</button>
+                </div>
+                <div class="card-body" id="contenedorEspacios">
+                    <p class="text-muted small mb-3">Añade cada zona a limpiar, especifica los metros cuadrados y adjunta 3 fotografías por área.</p>
+                    <!-- Los espacios se generarán aquí -->
+                </div>
+            </div>
+
+            <!-- PASO 2: Resumen y Pago -->
+            <div class="card shadow-sm mb-4 border-0">
+                <div class="card-header bg-verde-claro color-verde fw-bold">2. Resumen de Solicitud y Pago</div>
+                <div class="card-body">
+                    <!-- Resumen -->
+                    <div class="bg-light p-3 mb-4 rounded border">
+                        <h5 class="fw-bold">Resumen Calculado</h5>
+                        <p class="small text-muted mb-2">Cálculo estimado: $1.500 CLP por metro cuadrado.</p>
+                        <ul id="listaResumenEmpresa" class="list-unstyled mb-2">
+                            <li class="text-muted">No has añadido espacios aún.</li>
+                        </ul>
+                        <hr>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="fw-bold">Total Metros: <span id="totalMetros">0</span> m²</span>
+                            <h4 class="fw-bold color-verde mb-0">Total: $<span id="totalPrecioEmpresa">0</span></h4>
+                        </div>
+                    </div>
+
+                    <!-- Pago -->
+                    <h5 class="fw-bold color-azul-claro mb-3">Opciones de Financiamiento</h5>
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="radio" name="metodoPago" id="pagoTotal" value="Total" checked onchange="toggleCuotas()">
+                        <label class="form-check-label" for="pagoTotal">Pago Completo Inmediato</label>
+                    </div>
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="radio" name="metodoPago" id="pagoCuotas" value="Pie y Cuotas" onchange="toggleCuotas()">
+                        <label class="form-check-label" for="pagoCuotas">Línea de Crédito: Pie (30%) y Cuotas Mensuales</label>
+                    </div>
+
+                    <div id="cajaCuotas" class="mb-4 d-none p-3 bg-white border rounded">
+                        <p class="mb-2"><strong>Pie Inicial a Facturar:</strong> $<span id="valorPie">0</span></p>
+                        <select id="numeroCuotas" class="form-select">
+                            <option value="3">3 Cuotas Corporativas (Sin Interés)</option>
+                            <option value="6">6 Cuotas Corporativas (Sin Interés)</option>
+                            <option value="12">12 Cuotas Corporativas (Sin Interés)</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="btn btn-verde btn-lg w-100 text-white fw-bold shadow-sm">Generar Solicitud y Pagar</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Modal Éxito -->
+    <div class="modal fade" id="modalExito" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content text-center p-4">
+                <div class="modal-body">
+                    <h1 class="display-1 text-success">✅</h1>
+                    <h3 class="color-verde fw-bold mt-3">Solicitud Corporativa Creada</h3>
+                    <p>Su requerimiento se encuentra <strong>En proceso de validación</strong>.</p>
+                    <a href="empresa_reportes.html" class="btn btn-azul text-white mt-3 w-100 rounded-pill">Ir a Reportes</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const PRECIO_POR_M2 = 1500;
+        let contadorEspacios = 0;
+
+        // Generar un espacio inicial automáticamente
+        window.onload = () => agregarEspacio();
+
+        function agregarEspacio() {
+            contadorEspacios++;
+            const div = document.createElement('div');
+            div.className = 'espacio-card p-3 mb-3 rounded border';
+            div.id = `espacio-${contadorEspacios}`;
+            div.innerHTML = `
+                <div class="d-flex justify-content-between">
+                    <h6 class="fw-bold color-cian mb-3">Espacio ${contadorEspacios}</h6>
+                    ${contadorEspacios > 1 ? `<button type="button" class="btn btn-sm btn-outline-danger" onclick="eliminarEspacio(${contadorEspacios})">Eliminar</button>` : ''}
+                </div>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label small">Descripción de la zona</label>
+                        <input type="text" class="form-control desc-espacio" placeholder="Ej: Oficinas administrativas, Bodega principal..." required>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label small">Metros Cuadrados (m²)</label>
+                        <input type="number" class="form-control m2-espacio" min="1" placeholder="Ej: 50" oninput="actualizarResumen()" required>
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label small">Adjuntar 3 Fotografías</label>
+                        <input type="file" class="form-control" multiple accept="image/*" required>
+                    </div>
+                </div>
+            `;
+            document.getElementById('contenedorEspacios').appendChild(div);
+        }
+
+        function eliminarEspacio(id) {
+            document.getElementById(`espacio-${id}`).remove();
+            actualizarResumen();
+        }
+
+        let totalGlobalM2 = 0;
+        let costoTotal = 0;
+
+        function actualizarResumen() {
+            const inputsM2 = document.querySelectorAll('.m2-espacio');
+            const inputsDesc = document.querySelectorAll('.desc-espacio');
+            const lista = document.getElementById('listaResumenEmpresa');
+            
+            lista.innerHTML = '';
+            totalGlobalM2 = 0;
+
+            inputsM2.forEach((input, index) => {
+                let m2 = parseFloat(input.value) || 0;
+                let desc = inputsDesc[index].value || `Espacio ${index + 1}`;
+                if(m2 > 0) {
+                    totalGlobalM2 += m2;
+                    let subtotal = m2 * PRECIO_POR_M2;
+                    lista.innerHTML += `<li>${desc} (${m2} m²) <span class="float-end">$${subtotal.toLocaleString('es-CL')}</span></li>`;
+                }
+            });
+
+            costoTotal = totalGlobalM2 * PRECIO_POR_M2;
+            
+            if(totalGlobalM2 === 0) lista.innerHTML = '<li class="text-muted">Aún no hay metros cuadrados ingresados.</li>';
+
+            document.getElementById('totalMetros').innerText = totalGlobalM2;
+            document.getElementById('totalPrecioEmpresa').innerText = costoTotal.toLocaleString('es-CL');
+            document.getElementById('valorPie').innerText = (costoTotal * 0.3).toLocaleString('es-CL');
+        }
+
+        function toggleCuotas() {
+            const caja = document.getElementById('cajaCuotas');
+            document.getElementById('pagoCuotas').checked ? caja.classList.remove('d-none') : caja.classList.add('d-none');
+        }
+
+        document.getElementById('formContratoEmpresa').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            if (totalGlobalM2 === 0) {
+                alert('Debes ingresar al menos los metros cuadrados de un espacio.');
+                return;
+            }
+
+            const esPagoTotal = document.getElementById('pagoTotal').checked;
+            const numCuotas = esPagoTotal ? 0 : parseInt(document.getElementById('numeroCuotas').value);
+            const saldoAFinanciar = costoTotal * 0.7;
+            const valorPorCuota = esPagoTotal ? 0 : Math.round(saldoAFinanciar / numCuotas);
+
+            // Guardamos todo en la misma "Base de datos" de localStorage pero con etiqueta tipoCliente
+            const nuevaSolicitud = {
+                idSolicitud: 'EMP-' + Math.floor(Math.random() * 1000000), 
+                usuario: localStorage.getItem('nombreEmpresaActiva') || 'Empresa Generica',
+                tipoCliente: 'Empresa',
+                fecha: new Date().toLocaleDateString(),
+                tipoPropiedad: `Servicio Corporativo (${totalGlobalM2} m²)`, // Resumen para las tablas
+                totalPagado: costoTotal,
+                esPagoTotal: esPagoTotal,
+                cuotasTotales: numCuotas,
+                cuotasPagadas: 0, 
+                valorCuota: valorPorCuota,
+                estado: 'En proceso de validación'
+            };
+
+            let solicitudesGuardadas = JSON.parse(localStorage.getItem('solicitudesLimpieza')) || [];
+            solicitudesGuardadas.push(nuevaSolicitud);
+            localStorage.setItem('solicitudesLimpieza', JSON.stringify(solicitudesGuardadas));
+
+            new bootstrap.Modal(document.getElementById('modalExito')).show();
+        });
+    </script>
 </body>
 </html>

@@ -3,18 +3,140 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>REPORTES Y QUEJAS</title>
+    <title>Reportes e Historial - LimpiezaPro</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/estilo.css">
+    <script>
+        if (localStorage.getItem('sesionActiva') !== 'true') { window.location.href = 'index.html'; }
+    </script>
 </head>
-<body>
-    <nav class="bg-menu">
-        <a href="index.html" class="a-menu">PRINCIPAL </a> |-|
-        <a href="usuario.html" class="a-menu">USUARIO </a>
-    </nav>  
-    <header>
-        <div class="header">
-            <h1>REPORTES Y QUEJAS</h1>
-            <p class="header-sub">Limpieza</p>
+<body class="bg-light">
+
+    <!-- Navegación -->
+    <nav class="navbar navbar-expand-lg custom-navbar shadow-sm">
+        <div class="container">
+            <a class="navbar-brand text-white fw-bold" href="usuario.html">LimpiezaPro - Portal Usuario</a>
+            <div class="ms-auto">
+                <a href="usuario.html" class="btn btn-outline-light btn-sm">Volver al Panel</a>
+            </div>
         </div>
-    </header>
+    </nav>
+
+    <div class="container py-5">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="color-cian fw-bold mb-0">Historial de Servicios</h2>
+            <button class="btn btn-verde text-white" onclick="window.print()">🖨️ Imprimir Reporte General</button>
+        </div>
+
+        <div class="card shadow-sm border-0">
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0 align-middle">
+                        <thead class="bg-cian-claro color-cian">
+                            <tr>
+                                <th class="px-4 py-3">ID Solicitud</th>
+                                <th class="py-3">Fecha</th>
+                                <th class="py-3">Propiedad</th>
+                                <th class="py-3">Monto Total</th>
+                                <th class="py-3">Estado</th>
+                                <th class="px-4 py-3 text-end">Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tablaReportes">
+                            <!-- Los datos se inyectarán aquí mediante JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para ver Comprobante -->
+    <div class="modal fade" id="modalComprobante" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-verde-claro">
+                    <h5 class="modal-title color-verde fw-bold">Comprobante de Servicio</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="cuerpoComprobante">
+                    <!-- Contenido del comprobante dinámico -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="button" class="btn btn-azul text-white" onclick="window.print()">Imprimir Ticket</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const usuarioActivo = localStorage.getItem('nombreUsuarioActivo');
+        const todasLasSolicitudes = JSON.parse(localStorage.getItem('solicitudesLimpieza')) || [];
+        const misSolicitudes = todasLasSolicitudes.filter(sol => sol.usuario === usuarioActivo);
+        const tabla = document.getElementById('tablaReportes');
+
+        if (misSolicitudes.length === 0) {
+            tabla.innerHTML = `<tr><td colspan="6" class="text-center py-4 text-muted">No tienes historial de servicios registrados.</td></tr>`;
+        } else {
+            misSolicitudes.reverse().forEach((solicitud, index) => {
+                // Colores dinámicos para los estados
+                let badgeClass = 'bg-warning text-dark';
+                if(solicitud.estado === 'En marcha') badgeClass = 'bg-info text-white';
+                if(solicitud.estado === 'Terminada') badgeClass = 'bg-success text-white';
+
+                tabla.innerHTML += `
+                    <tr>
+                        <td class="px-4 fw-bold text-secondary">${solicitud.idSolicitud}</td>
+                        <td>${solicitud.fecha}</td>
+                        <td>${solicitud.tipoPropiedad}</td>
+                        <td>$${solicitud.totalPagado.toLocaleString('es-CL')}</td>
+                        <td><span class="badge ${badgeClass}">${solicitud.estado}</span></td>
+                        <td class="px-4 text-end">
+                            <button class="btn btn-sm btn-outline-info" onclick='verComprobante(${JSON.stringify(solicitud)})'>
+                                Ver Detalle
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        function verComprobante(solicitud) {
+            const cuerpo = document.getElementById('cuerpoComprobante');
+            
+            // Construir la vista del ticket
+            cuerpo.innerHTML = `
+                <div class="text-center mb-4">
+                    <h4 class="fw-bold color-azul-claro">LimpiezaPro</h4>
+                    <p class="text-muted small mb-0">Comprobante de Solicitud</p>
+                </div>
+                <ul class="list-group list-group-flush mb-3">
+                    <li class="list-group-item d-flex justify-content-between px-0">
+                        <span class="text-muted">ID:</span> <strong>${solicitud.idSolicitud}</strong>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between px-0">
+                        <span class="text-muted">Fecha:</span> <strong>${solicitud.fecha}</strong>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between px-0">
+                        <span class="text-muted">Servicio:</span> <strong>${solicitud.tipoPropiedad}</strong>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between px-0">
+                        <span class="text-muted">Método de Pago:</span> <strong>${solicitud.esPagoTotal ? 'Pago Total Inmediato' : 'Pie + ' + solicitud.cuotasTotales + ' Cuotas'}</strong>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between px-0">
+                        <span class="text-muted">Estado Actual:</span> <span class="badge bg-secondary">${solicitud.estado}</span>
+                    </li>
+                </ul>
+                <div class="bg-light p-3 text-end rounded">
+                    <h5 class="mb-0">Total: <span class="color-verde fw-bold">$${solicitud.totalPagado.toLocaleString('es-CL')}</span></h5>
+                </div>
+            `;
+
+            const modal = new bootstrap.Modal(document.getElementById('modalComprobante'));
+            modal.show();
+        }
+    </script>
 </body>
 </html>

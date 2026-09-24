@@ -3,18 +3,272 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CONTRATA SERVICIO</title>
+    <title>Contratar Servicio - LimpiezaPro</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/estilo.css">
+
+    <!-- PROTECCIÓN DE RUTA -->
+    <script>
+        if (localStorage.getItem('sesionActiva') !== 'true') {
+            window.location.href = 'index.html';
+        }
+    </script>
+    <style>
+        /* Estilos específicos para esta página usando tus colores */
+        .card-header-custom { background-color: var(--color-verde-claro); color: var(--color-verde); }
+        .area-item { border: 1px solid #dee2e6; border-radius: 8px; padding: 15px; margin-bottom: 10px; transition: 0.3s; }
+        .area-item:hover { border-color: var(--color-cian); box-shadow: 0 4px 8px rgba(0,188,212,0.1); }
+        .resumen-box { background-color: var(--color-azul-muy-claro); border-left: 5px solid var(--color-azul-claro); }
+    </style>
 </head>
-<body>
-    <nav class="bg-menu">
-        <a href="index.html" class="a-menu">PRINCIPAL </a> |-|
-        <a href="usuario.html" class="a-menu">USUARIO </a>
-    </nav>  
-    <header>
-        <div class="header">
-            <h1>CONTRATA SERVICIO</h1>
-            <p class="header-sub">Limpieza</p>
+<body class="bg-light">
+
+    <!-- Navegación -->
+    <nav class="navbar navbar-expand-lg custom-navbar shadow-sm">
+        <div class="container">
+            <a class="navbar-brand text-white fw-bold" href="usuario.html">LimpiezaPro - Portal Usuario</a>
+            <div class="ms-auto">
+                <a href="usuario.html" class="btn btn-outline-light btn-sm">Volver al Panel</a>
+            </div>
         </div>
-    </header>
+    </nav>
+
+    <div class="container py-4">
+        <h2 class="mb-4 color-cian fw-bold text-center">Configura tu Servicio de Limpieza</h2>
+        
+        <form id="formContrato">
+            <!-- PASO 1: Tipo de Servicio -->
+            <div class="card shadow-sm mb-4 border-0">
+                <div class="card-header card-header-custom fw-bold">1. Tipo de Propiedad / Servicio</div>
+                <div class="card-body">
+                    <select id="tipoServicio" class="form-select" required>
+                        <option value="" disabled selected>Selecciona una opción...</option>
+                        <option value="Casa">Casa</option>
+                        <option value="Departamento">Departamento</option>
+                        <option value="Aditivos">Aditivos Especiales</option>
+                        <option value="Otros">Otros (Bodegas, Locales)</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- PASO 2: Seleccionar Áreas -->
+            <div class="card shadow-sm mb-4 border-0">
+                <div class="card-header card-header-custom fw-bold">2. Seleccionar Áreas a Limpiar</div>
+                <div class="card-body" id="listaAreas">
+                    <p class="text-muted small">Añade la cantidad de áreas que necesitas limpiar. El precio se calculará automáticamente.</p>
+                    <div class="row">
+                        <!-- Las áreas se generan por JavaScript -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- PASO 3: Datos de Servicio y Fotos -->
+            <div class="card shadow-sm mb-4 border-0">
+                <div class="card-header card-header-custom fw-bold">3. Detalles y Fotografías</div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label class="form-label fw-bold color-azul-claro">Comentarios Adicionales</label>
+                        <textarea id="comentarios" class="form-control" rows="3" placeholder="Ej: Hay manchas de pintura en el piso, cuidado con el perro, etc."></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold color-azul-claro">Adjuntar Fotografías</label>
+                        <p class="small text-muted mb-2">Por favor, sube <strong>3 fotos por cada área</strong> seleccionada para evaluar el nivel de suciedad.</p>
+                        <input type="file" id="fotos" class="form-control" multiple accept="image/*" required>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PASO 4: Resumen y Pago -->
+            <div class="card shadow-sm mb-4 border-0">
+                <div class="card-header bg-cian-claro color-cian fw-bold">4. Resumen y Pago</div>
+                <div class="card-body">
+                    <!-- Caja de Resumen -->
+                    <div class="resumen-box p-3 mb-4 rounded">
+                        <h5 class="fw-bold">Resumen de Solicitud</h5>
+                        <ul id="listaResumen" class="list-unstyled mb-2">
+                            <li class="text-muted">Aún no has seleccionado áreas.</li>
+                        </ul>
+                        <hr>
+                        <h4 class="fw-bold text-end">Total: $<span id="totalPrecio">0</span></h4>
+                    </div>
+
+                    <!-- Opciones de Pago -->
+                    <h5 class="fw-bold color-verde mb-3">Método de Pago</h5>
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="radio" name="metodoPago" id="pagoTotal" value="Total" checked onchange="toggleCuotas()">
+                        <label class="form-check-label" for="pagoTotal">Pago Completo Inmediato</label>
+                    </div>
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="radio" name="metodoPago" id="pagoCuotas" value="Pie y Cuotas" onchange="toggleCuotas()">
+                        <label class="form-check-label" for="pagoCuotas">Pago con Pie Inicial (30%) y Mensualidades</label>
+                    </div>
+
+                    <!-- Selector de Cuotas (Oculto por defecto) -->
+                    <div id="cajaCuotas" class="mb-4 d-none p-3 bg-light border rounded">
+                        <p class="mb-2"><strong>Pie a pagar hoy:</strong> $<span id="valorPie">0</span></p>
+                        <p class="mb-2"><strong>Saldo a financiar:</strong> $<span id="valorSaldo">0</span></p>
+                        <label class="form-label">Selecciona las cuotas:</label>
+                        <select id="numeroCuotas" class="form-select">
+                            <option value="3">3 Cuotas sin interés</option>
+                            <option value="6">6 Cuotas sin interés</option>
+                            <option value="12">12 Cuotas con interés (+5%)</option>
+                        </select>
+                    </div>
+
+                    <!-- Botón Final -->
+                    <button type="submit" class="btn btn-verde btn-lg w-100 text-white fw-bold shadow-sm">Confirmar y Pagar Servicio</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Modal de Éxito -->
+    <div class="modal fade" id="modalExito" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content text-center p-4">
+                <div class="modal-body">
+                    <h1 class="display-1 text-success">✅</h1>
+                    <h3 class="color-verde fw-bold mt-3">¡Pago Exitoso!</h3>
+                    <p>Tu solicitud ha sido enviada y está <strong>En proceso de validación</strong> por un administrador.</p>
+                    <a href="usuario_reportes.html" class="btn btn-cian text-white mt-3 w-100 rounded-pill">Ver mis Reportes</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // --- 1. DATOS DE LAS ÁREAS ---
+        const areasDisponibles = [
+            { id: 'baño', nombre: 'Baño Completo', precio: 15000 },
+            { id: 'medio_baño', nombre: 'Medio Baño', precio: 8000 },
+            { id: 'cocina', nombre: 'Cocina', precio: 25000 },
+            { id: 'dormitorio', nombre: 'Dormitorio', precio: 12000 },
+            { id: 'sala', nombre: 'Sala de Estar / Living', precio: 15000 },
+            { id: 'comedor', nombre: 'Comedor', precio: 12000 },
+            { id: 'pasillo', nombre: 'Pasillo / Escalera', precio: 8000 },
+            { id: 'balcon', nombre: 'Terraza / Balcón', precio: 10000 },
+            { id: 'ventanas', nombre: 'Limpieza de Ventanas (Set)', precio: 20000 },
+            { id: 'piscina', nombre: 'Piscina (Aditivo)', precio: 45000 },
+            { id: 'patio', nombre: 'Patio / Jardín', precio: 30000 }
+        ];
+
+        let areasSeleccionadas = {};
+
+        // --- 2. RENDERIZAR ÁREAS EN HTML ---
+        const contenedorAreas = document.querySelector('#listaAreas .row');
+        areasDisponibles.forEach(area => {
+            contenedorAreas.innerHTML += `
+                <div class="col-md-6 col-lg-4">
+                    <div class="area-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <strong class="color-azul-claro">${area.nombre}</strong><br>
+                            <small class="text-muted">$${area.precio.toLocaleString('es-CL')}</small>
+                        </div>
+                        <div class="d-flex align-items-center">
+                            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="modificarCantidad('${area.id}', -1)">-</button>
+                            <span class="mx-3 fw-bold" id="cant-${area.id}">0</span>
+                            <button type="button" class="btn btn-sm btn-outline-success" onclick="modificarCantidad('${area.id}', 1)">+</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            areasSeleccionadas[area.id] = 0; // Inicializar en 0
+        });
+
+        // --- 3. LÓGICA DE ACTUALIZACIÓN DE PRECIOS Y RESUMEN ---
+        function modificarCantidad(id, cambio) {
+            if (areasSeleccionadas[id] + cambio >= 0) {
+                areasSeleccionadas[id] += cambio;
+                document.getElementById(`cant-${id}`).innerText = areasSeleccionadas[id];
+                actualizarResumen();
+            }
+        }
+
+        let totalGlobal = 0;
+
+        function actualizarResumen() {
+            const lista = document.getElementById('listaResumen');
+            lista.innerHTML = '';
+            totalGlobal = 0;
+            let hayAreas = false;
+
+            areasDisponibles.forEach(area => {
+                const cant = areasSeleccionadas[area.id];
+                if (cant > 0) {
+                    hayAreas = true;
+                    const subtotal = cant * area.precio;
+                    totalGlobal += subtotal;
+                    lista.innerHTML += `<li>${cant}x ${area.nombre} <span class="float-end">$${subtotal.toLocaleString('es-CL')}</span></li>`;
+                }
+            });
+
+            if (!hayAreas) {
+                lista.innerHTML = '<li class="text-muted">Aún no has seleccionado áreas.</li>';
+            }
+
+            document.getElementById('totalPrecio').innerText = totalGlobal.toLocaleString('es-CL');
+            
+            // Actualizar cálculos de cuotas si aplica
+            document.getElementById('valorPie').innerText = (totalGlobal * 0.3).toLocaleString('es-CL');
+            document.getElementById('valorSaldo').innerText = (totalGlobal * 0.7).toLocaleString('es-CL');
+        }
+
+        // --- 4. LÓGICA DE MOSTRAR/OCULTAR CUOTAS ---
+        function toggleCuotas() {
+            const cajaCuotas = document.getElementById('cajaCuotas');
+            const esCuotas = document.getElementById('pagoCuotas').checked;
+            if (esCuotas) {
+                cajaCuotas.classList.remove('d-none');
+            } else {
+                cajaCuotas.classList.add('d-none');
+            }
+        }
+
+        // --- 5. PROCESAR PAGO Y GUARDAR EN LOCALSTORAGE ---
+        document.getElementById('formContrato').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            if (totalGlobal === 0) {
+                alert('Debes seleccionar al menos un área para limpiar.');
+                return;
+            }
+
+            // Crear el objeto del contrato
+            // NÚMERO DE CUOTAS Y CÁLCULOS
+            const esPagoTotal = document.getElementById('pagoTotal').checked;
+            const numCuotas = esPagoTotal ? 0 : parseInt(document.getElementById('numeroCuotas').value);
+            const saldoAFinanciar = totalGlobal * 0.7; // 70% restante
+            const valorPorCuota = esPagoTotal ? 0 : Math.round(saldoAFinanciar / numCuotas);
+
+            // Crear el objeto del contrato
+            const nuevoContrato = {
+                idSolicitud: 'REQ-' + Math.floor(Math.random() * 1000000), 
+                usuario: localStorage.getItem('nombreUsuarioActivo'),
+                fecha: new Date().toLocaleDateString(),
+                tipoPropiedad: document.getElementById('tipoServicio').value,
+                comentarios: document.getElementById('comentarios').value,
+                totalPagado: totalGlobal,
+                esPagoTotal: esPagoTotal,
+                cuotasTotales: numCuotas,
+                cuotasPagadas: 0, // Inicia en 0 cuotas pagadas
+                valorCuota: valorPorCuota,
+                estado: 'En proceso de validación' // ESTADO INICIAL
+            };
+
+            // Traer las solicitudes anteriores de la "Base de Datos" (LocalStorage) o crear un array nuevo
+            let solicitudesGuardadas = JSON.parse(localStorage.getItem('solicitudesLimpieza')) || [];
+            
+            // Agregar la nueva
+            solicitudesGuardadas.push(nuevoContrato);
+            
+            // Guardar de vuelta
+            localStorage.setItem('solicitudesLimpieza', JSON.stringify(solicitudesGuardadas));
+
+            // Mostrar el modal de éxito (que incluye el botón para ir a reportes)
+            const modal = new bootstrap.Modal(document.getElementById('modalExito'));
+            modal.show();
+        });
+    </script>
 </body>
 </html>
