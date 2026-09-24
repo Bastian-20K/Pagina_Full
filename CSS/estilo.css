@@ -81,3 +81,86 @@
     background-color: #0288d1;
     color: white;
 }
+
+
+/* Estilos para los Patrocinadores */
+.sponsor-card {
+    border-radius: 10px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.sponsor-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1) !important;
+}
+
+.sponsor-logo {
+    max-height: 45px;
+    width: auto;
+    object-fit: contain;
+    filter: grayscale(20%);
+    transition: filter 0.3s ease;
+}
+
+.sponsor-card:hover .sponsor-logo {
+    filter: grayscale(0%);
+}
+
+/* ================= ESTILOS REDES SOCIALES Y FLOATING ================= */
+
+/* Botones de Redes Sociales en Footer */
+.social-icon-btn {
+    width: 40px;
+    height: 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+    color: #ffffff;
+    background-color: rgba(255, 255, 255, 0.1);
+    text-decoration: none;
+    font-size: 1.1rem;
+}
+
+.social-icon-btn:hover {
+    transform: translateY(-3px);
+    color: #ffffff;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+/* Iconos RedesSociales hover */
+.social-facebook:hover { background-color: #1877F2; }
+.social-instagram:hover { background-color: #E4405F; }
+.social-linkedin:hover { background-color: #0A66C2; }
+.social-x:hover { background-color: #000000; border: 1px solid #333; }
+.social-tiktok:hover { background-color: #000000; border: 1px solid #333; }
+.social-youtube:hover { background-color: #FF0000; }
+.social-whatsapp:hover { background-color: #25D366; }
+
+/* Botón Flotante de WhatsApp para Conversión Directa */
+.whatsapp-float {
+    position: fixed;
+    width: 58px;
+    height: 58px;
+    bottom: 25px;
+    right: 25px;
+    background-color: #25d366;
+    color: #FFF;
+    border-radius: 50px;
+    text-align: center;
+    font-size: 28px;
+    box-shadow: 2px 5px 15px rgba(0, 0, 0, 0.3);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.whatsapp-float:hover {
+    background-color: #128c7e;
+    color: #fff;
+    transform: scale(1.1);
+}

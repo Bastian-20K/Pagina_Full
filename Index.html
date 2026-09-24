@@ -5,11 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Servicios de Limpieza - Inicio</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome 6 (Íconos oficiales de redes sociales) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="css/estilo.css">
 </head>
 <body>
 
-    <!-- Navegación -->
+    <!-- BARRA SUPERIOR -->
     <nav class="navbar navbar-expand-lg custom-navbar shadow-sm">
         <div class="container">
             <a class="navbar-brand text-white fw-bold" href="index.html">LimpiezaPro</a>
@@ -24,7 +26,7 @@
         </div>
     </nav>  
 
-    <!-- Encabezado / Hero Section -->
+    <!-- TITULO DE PAGINA/INFO -->
     <header class="hero-section text-center text-white py-5">
         <div class="container py-5">
             <h1 class="display-4 fw-bold shadow-text">Tu Entorno Impecable, Siempre</h1>
@@ -32,7 +34,7 @@
         </div>
     </header>
 
-    <!-- Sección de Portales -->
+    <!-- Sección de Portales para login  -->
     <section id="ingresar" class="container py-5 mt-4">
         <div class="text-center mb-5">
             <h2 class="fw-bold color-azul-claro">Selecciona tu Portal de Acceso</h2>
@@ -58,6 +60,7 @@
                     <div class="card-body p-4">
                         <div class="icon-box bg-cian-claro mb-3">🏢</div>
                         <h3 class="card-title color-cian fw-bold">Empresas</h3>
+                        <p class="card-text">Servicios de limpieza profesional para oficinas, instalaciones comerciales e industriales. Financia tu servicio corporativo con un pie inicial y el resto en cuotas..</p>
                         <button class="btn btn-cian text-white mt-3 w-100 rounded-pill" data-bs-toggle="modal" data-bs-target="#modalEmpresa">Acceder como Empresa</button>
                     </div>
                 </div>
@@ -96,7 +99,7 @@
                     </ul>
                     <div class="tab-content mt-3" id="myTabContent">
                         
-                        <!-- Formulario de Login -->
+                        <!-- Formulario de Ingreso -->
                         <div class="tab-pane fade show active" id="login" role="tabpanel">
                             <form id="formLogin">
                                 <div class="mb-3">
@@ -159,7 +162,7 @@
                     </ul>
                     <div class="tab-content mt-3">
                         
-                        <!-- Formulario de Login Empresa -->
+                        <!-- Formulario de Ingreso Empresa -->
                         <div class="tab-pane fade show active" id="loginEmpresa" role="tabpanel">
                             <form id="formLoginEmpresa">
                                 <div class="mb-3">
@@ -200,6 +203,142 @@
             </div>
         </div>
     </div>
+
+    <!-- ================= SECCIÓN DE MARCAS Y PATROCINADORES ================= -->
+    <section class="bg-light py-5 border-top border-bottom mt-5">
+        <div class="container text-center">
+            <h5 class="text-uppercase text-muted fw-bold mb-4 small">Marcas que nos respaldan y equipamiento profesional</h5>
+            
+            <div class="row row-cols-2 row-cols-md-5 g-3 align-items-center justify-content-center">
+                
+                <!-- Patrocinador 1: Kärcher -->
+                <div class="col">
+                    <div class="card h-100 border-0 shadow-sm p-3 bg-white sponsor-card text-center">
+                        <span class="fw-bold text-dark small d-block mb-2">KÄRCHER</span>
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/e/ea/K%C3%A4rcher_Logo_2015.svg" 
+                            alt="Logo Kärcher" 
+                            class="img-fluid mx-auto sponsor-logo">
+                    </div>
+                </div>
+
+                <!-- Patrocinador 2: 3M -->
+                <div class="col">
+                    <div class="card h-100 border-0 shadow-sm p-3 bg-white sponsor-card text-center">
+                        <span class="fw-bold text-dark small d-block mb-2">3M</span>
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/a/ac/3M_wordmark.svg" 
+                            alt="Logo 3M" 
+                            class="img-fluid mx-auto sponsor-logo">
+                    </div>
+                </div>
+
+                <!-- Patrocinador 3: Ecolab -->
+                <div class="col">
+                    <div class="card h-100 border-0 shadow-sm p-3 bg-white sponsor-card text-center">
+                        <span class="fw-bold text-dark small d-block mb-2">ECOLAB</span>
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/5/52/Ecolab.svg" 
+                            alt="Logo Ecolab" 
+                            class="img-fluid mx-auto sponsor-logo">
+                    </div>
+                </div>
+
+                <!-- Patrocinador 4: Diversey -->
+                <div class="col">
+                    <div class="card h-100 border-0 shadow-sm p-3 bg-white sponsor-card text-center">
+                        <span class="fw-bold text-dark small d-block mb-2">DIVERSEY</span>
+                        <img src="https://companieslogo.com/img/orig/DSEY_BIG-9bc3a0be.png?t=1658145155" 
+                            alt="Logo Diversey" 
+                            class="img-fluid mx-auto sponsor-logo"
+                            onerror="this.onerror=null; this.src='https://via.placeholder.com/120x40?text=DIVERSEY';">
+                    </div>
+                </div>
+
+                <!-- Patrocinador 5: Virutex Pro -->
+                <div class="col">
+                    <div class="card h-100 border-0 shadow-sm p-3 bg-white sponsor-card text-center">
+                        <span class="fw-bold text-dark small d-block mb-2">VIRUTEX PRO</span>
+                        <img src="https://www.virutexpro.cl/wp-content/uploads/2021/04/logo-virutexpro.png" 
+                            alt="Logo Virutex Pro" 
+                            class="img-fluid mx-auto sponsor-logo"
+                            onerror="this.onerror=null; this.src='https://via.placeholder.com/120x40?text=VIRUTEX+PRO';">
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- ================= PIE DE PÁGINA (FOOTER) ================= -->
+    <footer class="bg-dark text-white pt-5 pb-3">
+        <div class="container">
+            <div class="row g-4">
+                
+                <!-- Columna 1: Marca y Redes Sociales -->
+                <!-- Columna 1: Marca y Redes Sociales con Redirección -->
+                    <div class="col-lg-4 col-md-6">
+                        <h4 class="fw-bold text-white mb-3">Limpieza<span class="color-cian">Pro</span></h4>
+                        <p class="text-secondary small"> Soluciones integrales de limpieza profesional para hogares y empresas. Ofrecemos financiamiento flexible con pago en cuotas y pie inicial a la medida de tus necesidades.</p>
+                        <h6 class="fw-bold text-light mt-4 mb-3">Conéctate con nosotros</h6>
+                    <div class="d-flex flex-wrap gap-2">
+                        <a href="https://facebook.com/tu-pagina" target="_blank" rel="noopener noreferrer" class="social-icon-btn social-facebook" title="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+                        <a href="https://instagram.com/tu-usuario" target="_blank" rel="noopener noreferrer" class="social-icon-btn social-instagram" title="Instagram"><i class="fa-brands fa-instagram"></i></a>
+                        <a href="https://linkedin.com/company/tu-empresa" target="_blank" rel="noopener noreferrer" class="social-icon-btn social-linkedin" title="LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>
+                        <a href="https://x.com/tu-usuario" target="_blank" rel="noopener noreferrer" class="social-icon-btn social-x" title="X (Twitter)"><i class="fa-brands fa-x-twitter"></i></a>
+                        <a href="https://tiktok.com/@tu-usuario" target="_blank" rel="noopener noreferrer" class="social-icon-btn social-tiktok" title="TikTok"><i class="fa-brands fa-tiktok"></i></a>
+                        <a href="https://youtube.com/@tu-canal" target="_blank" rel="noopener noreferrer" class="social-icon-btn social-youtube" title="YouTube"><i class="fa-brands fa-youtube"></i></a>
+                        <a href="https://wa.me/56912345678?text=Hola,%20quisiera%20solicitar%20información%20sobre%20sus%20servicios" target="_blank" rel="noopener noreferrer" class="social-icon-btn social-whatsapp" title="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
+                </div>
+            </div>
+
+                <!-- Columna 2: Sectores en los que opera -->
+                <div class="col-lg-2 col-md-6">
+                    <h6 class="fw-bold text-white mb-3 text-uppercase">Sectores</h6>
+                    <ul class="list-unstyled text-secondary small mb-0">
+                        <li class="mb-2"><a href="#" class="text-decoration-none text-secondary text-white-50">Residencial y Casas</a></li>
+                        <li class="mb-2"><a href="#" class="text-decoration-none text-secondary text-white-50">Oficinas Corporativas</a></li>
+                        <li class="mb-2"><a href="#" class="text-decoration-none text-secondary text-white-50">Locales y Retail</a></li>
+                        <li class="mb-2"><a href="#" class="text-decoration-none text-secondary text-white-50">Industrias y Bodegas</a></li>
+                        <li class="mb-2"><a href="#" class="text-decoration-none text-secondary text-white-50">Salud y Educación</a></li>
+                    </ul>
+                </div>
+
+                <!-- Columna 3: Soporte e Información -->
+                <div class="col-lg-3 col-md-6">
+                    <h6 class="fw-bold text-white mb-3 text-uppercase">Soporte y Ayuda</h6>
+                    <ul class="list-unstyled text-secondary small mb-0">
+                        <li class="mb-2"><a href="#" class="text-decoration-none text-secondary text-white-50">Centro de Ayuda / FAQ</a></li>
+                        <li class="mb-2"><a href="#" class="text-decoration-none text-secondary text-white-50">Gestión de Cuotas y Pagos</a></li>
+                        <li class="mb-2"><a href="#" class="text-decoration-none text-secondary text-white-50">Términos y Condiciones</a></li>
+                        <li class="mb-2"><a href="#" class="text-decoration-none text-secondary text-white-50">Política de Privacidad</a></li>
+                        <li class="mb-2"><a href="#" class="text-decoration-none text-secondary text-white-50">Canal de Denuncias / Reclamos</a></li>
+                    </ul>
+                </div>
+
+                <!-- Columna 4: Contacto Directo -->
+                <div class="col-lg-3 col-md-6">
+                    <h6 class="fw-bold text-white mb-3 text-uppercase">Contacto</h6>
+                    <ul class="list-unstyled text-secondary small mb-0">
+                        <li class="mb-2"><i class="bi bi-geo-alt-fill color-cian me-2"></i>Av. Central #1234, Oficina 502</li>
+                        <li class="mb-2"><i class="bi bi-telephone-fill color-cian me-2"></i>+56 9 1234 5678</li>
+                        <li class="mb-2"><i class="bi bi-envelope-fill color-cian me-2"></i>contacto@limpiezapro.com</li>
+                        <li class="mb-2"><i class="bi bi-clock-fill color-cian me-2"></i>Lun - Vie: 08:30 - 18:30 hrs</li>
+                    </ul>
+                </div>
+
+            </div>
+
+            <hr class="border-secondary my-4">
+
+            <!-- Sub-footer / Derechos de autor -->
+            <div class="row align-items-center small text-secondary">
+                <div class="col-md-6 text-center text-md-start">
+                    © 2026 LimpiezaPro. Todos los derechos reservados.
+                </div>
+                <div class="col-md-6 text-center text-md-end mt-2 mt-md-0">
+                    <span class="badge bg-secondary text-dark"><i class="bi bi-credit-card me-1"></i>Pago en Cuotas Disponible</span>
+                </div>
+            </div>
+        </div>
+    </footer>
 
     <!-- Bootstrap JS y Lógica de Autenticación -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
