@@ -95,7 +95,7 @@
 }
 
 .sponsor-logo {
-    max-height: 45px;
+    max-height: 120px;
     width: auto;
     object-fit: contain;
     filter: grayscale(20%);
